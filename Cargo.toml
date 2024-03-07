@@ -21,6 +21,8 @@ maintenance = { status = "actively-developed" }
 default = ["wgpu", "fira-sans"]
 # Enable the `wgpu` GPU-accelerated renderer backend
 wgpu = ["iced_renderer/wgpu", "iced_widget/wgpu"]
+# Enable the `tiny-skia` software based renderer backend
+tiny-skia = ["iced_renderer/tiny_skia"]
 # Enables the `Image` widget
 image = ["iced_widget/image", "dep:image"]
 # Enables the `Svg` widget

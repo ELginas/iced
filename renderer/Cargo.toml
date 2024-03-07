@@ -12,6 +12,7 @@ keywords.workspace = true
 
 [features]
 wgpu = ["iced_wgpu"]
+tiny_skia = ["iced_tiny_skia"]
 image = ["iced_tiny_skia/image", "iced_wgpu?/image"]
 svg = ["iced_tiny_skia/svg", "iced_wgpu?/svg"]
 geometry = ["iced_graphics/geometry", "iced_tiny_skia/geometry", "iced_wgpu?/geometry"]
@@ -23,6 +24,7 @@ fira-sans = ["iced_graphics/fira-sans"]
 [dependencies]
 iced_graphics.workspace = true
 iced_tiny_skia.workspace = true
+iced_tiny_skia.optional = true
 
 iced_wgpu.workspace = true
 iced_wgpu.optional = true

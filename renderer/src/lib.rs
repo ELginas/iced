@@ -35,6 +35,7 @@ use std::borrow::Cow;
 ///
 /// [`iced`]: https://github.com/iced-rs/iced
 pub enum Renderer {
+    #[cfg(feature = "tiny_skia")]
     TinySkia(iced_tiny_skia::Renderer),
     #[cfg(feature = "wgpu")]
     Wgpu(iced_wgpu::Renderer),
@@ -43,6 +44,7 @@ pub enum Renderer {
 macro_rules! delegate {
     ($renderer:expr, $name:ident, $body:expr) => {
         match $renderer {
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia($name) => $body,
             #[cfg(feature = "wgpu")]
             Self::Wgpu($name) => $body,
@@ -53,6 +55,7 @@ macro_rules! delegate {
 impl Renderer {
     pub fn draw_mesh(&mut self, mesh: Mesh) {
         match self {
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia(_) => {
                 log::warn!("Unsupported mesh primitive: {mesh:?}");
             }
@@ -69,6 +72,7 @@ impl Renderer {
 impl core::Renderer for Renderer {
     fn with_layer(&mut self, bounds: Rectangle, f: impl FnOnce(&mut Self)) {
         match self {
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia(renderer) => {
                 let primitives = renderer.start_layer();
 
@@ -89,11 +93,9 @@ impl core::Renderer for Renderer {
                 f(self);
 
                 match self {
-                    #[cfg(feature = "wgpu")]
                     Self::Wgpu(renderer) => {
                         renderer.end_layer(primitives, bounds);
                     }
-                    _ => unreachable!(),
                 }
             }
         }
@@ -105,6 +107,7 @@ impl core::Renderer for Renderer {
         f: impl FnOnce(&mut Self),
     ) {
         match self {
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia(renderer) => {
                 let primitives = renderer.start_transformation();
 
@@ -125,11 +128,9 @@ impl core::Renderer for Renderer {
                 f(self);
 
                 match self {
-                    #[cfg(feature = "wgpu")]
                     Self::Wgpu(renderer) => {
                         renderer.end_transformation(primitives, transformation);
                     }
-                    _ => unreachable!(),
                 }
             }
         }
@@ -153,9 +154,10 @@ impl text::Renderer for Renderer {
     type Paragraph = Paragraph;
     type Editor = Editor;
 
-    const ICON_FONT: Font = iced_tiny_skia::Renderer::ICON_FONT;
-    const CHECKMARK_ICON: char = iced_tiny_skia::Renderer::CHECKMARK_ICON;
-    const ARROW_DOWN_ICON: char = iced_tiny_skia::Renderer::ARROW_DOWN_ICON;
+    // There's a better way to do without duplication but was unable to find one.
+    const ICON_FONT: Font = Font::with_name("Iced-Icons");
+    const CHECKMARK_ICON: char = '\u{f00c}';
+    const ARROW_DOWN_ICON: char = '\u{e800}';
 
     fn default_font(&self) -> Self::Font {
         delegate!(self, renderer, renderer.default_font())
@@ -255,6 +257,7 @@ impl crate::graphics::geometry::Renderer for Renderer {
 
     fn draw(&mut self, layers: Vec<Self::Geometry>) {
         match self {
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia(renderer) => {
                 for layer in layers {
                     match layer {
@@ -273,7 +276,6 @@ impl crate::graphics::geometry::Renderer for Renderer {
                         crate::Geometry::Wgpu(primitive) => {
                             renderer.draw_primitive(primitive);
                         }
-                        crate::Geometry::TinySkia(_) => unreachable!(),
                     }
                 }
             }
@@ -289,6 +291,7 @@ impl iced_wgpu::primitive::pipeline::Renderer for Renderer {
         primitive: impl wgpu::primitive::pipeline::Primitive,
     ) {
         match self {
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia(_renderer) => {
                 log::warn!(
                     "Custom shader primitive is unavailable with tiny-skia."

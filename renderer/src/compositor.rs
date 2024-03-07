@@ -7,12 +7,14 @@ use std::env;
 use std::future::Future;
 
 pub enum Compositor {
+    #[cfg(feature = "tiny_skia")]
     TinySkia(iced_tiny_skia::window::Compositor),
     #[cfg(feature = "wgpu")]
     Wgpu(iced_wgpu::window::Compositor),
 }
 
 pub enum Surface {
+    #[cfg(feature = "tiny_skia")]
     TinySkia(iced_tiny_skia::window::Surface),
     #[cfg(feature = "wgpu")]
     Wgpu(iced_wgpu::window::Surface<'static>),
@@ -49,6 +51,7 @@ impl crate::graphics::Compositor for Compositor {
 
     fn create_renderer(&self) -> Self::Renderer {
         match self {
+            #[cfg(feature = "tiny_skia")]
             Compositor::TinySkia(compositor) => {
                 Renderer::TinySkia(compositor.create_renderer())
             }
@@ -66,6 +69,7 @@ impl crate::graphics::Compositor for Compositor {
         height: u32,
     ) -> Surface {
         match self {
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia(compositor) => Surface::TinySkia(
                 compositor.create_surface(window, width, height),
             ),
@@ -83,6 +87,7 @@ impl crate::graphics::Compositor for Compositor {
         height: u32,
     ) {
         match (self, surface) {
+            #[cfg(feature = "tiny_skia")]
             (Self::TinySkia(compositor), Surface::TinySkia(surface)) => {
                 compositor.configure_surface(surface, width, height);
             }
@@ -99,6 +104,7 @@ impl crate::graphics::Compositor for Compositor {
 
     fn fetch_information(&self) -> Information {
         match self {
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia(compositor) => compositor.fetch_information(),
             #[cfg(feature = "wgpu")]
             Self::Wgpu(compositor) => compositor.fetch_information(),
@@ -114,6 +120,7 @@ impl crate::graphics::Compositor for Compositor {
         overlay: &[T],
     ) -> Result<(), SurfaceError> {
         match (self, renderer, surface) {
+            #[cfg(feature = "tiny_skia")]
             (
                 Self::TinySkia(_compositor),
                 crate::Renderer::TinySkia(renderer),
@@ -161,6 +168,7 @@ impl crate::graphics::Compositor for Compositor {
         overlay: &[T],
     ) -> Vec<u8> {
         match (self, renderer, surface) {
+            #[cfg(feature = "tiny_skia")]
             (
                 Self::TinySkia(_compositor),
                 Renderer::TinySkia(renderer),
@@ -209,6 +217,7 @@ impl Candidate {
         vec![
             #[cfg(feature = "wgpu")]
             Self::Wgpu,
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia,
         ]
     }
@@ -235,6 +244,7 @@ impl Candidate {
         _compatible_window: W,
     ) -> Result<Compositor, Error> {
         match self {
+            #[cfg(feature = "tiny_skia")]
             Self::TinySkia => {
                 let compositor = iced_tiny_skia::window::compositor::new(
                     iced_tiny_skia::Settings {
@@ -261,9 +271,8 @@ impl Candidate {
 
                 Ok(Compositor::Wgpu(compositor))
             }
-            #[cfg(not(feature = "wgpu"))]
-            Self::Wgpu => {
-                panic!("`wgpu` feature was not enabled in `iced_renderer`")
+            _ => {
+                panic!("no renderer backend feature was enabled in `iced_renderer`")
             }
         }
     }
