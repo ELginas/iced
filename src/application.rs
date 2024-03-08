@@ -49,7 +49,7 @@ pub use crate::style::application::{Appearance, StyleSheet};
 /// [`stopwatch`]: https://github.com/iced-rs/iced/tree/0.12/examples/stopwatch
 /// [`todos`]: https://github.com/iced-rs/iced/tree/0.12/examples/todos
 /// [`Sandbox`]: crate::Sandbox
-/// [`Canvas`]: crate::widget::Canvas
+/// [`Canvas`]: ../widget/struct.Canvas.html
 /// [PokéAPI]: https://pokeapi.co/
 /// [TodoMVC]: http://todomvc.com/
 ///

@@ -44,10 +44,10 @@ use crate::{Application, Command, Element, Error, Settings, Subscription};
 /// [`styling`]: https://github.com/iced-rs/iced/tree/0.12/examples/styling
 /// [`svg`]: https://github.com/iced-rs/iced/tree/0.12/examples/svg
 /// [`tour`]: https://github.com/iced-rs/iced/tree/0.12/examples/tour
-/// [`Canvas widget`]: crate::widget::Canvas
+/// [`Canvas widget`]: ../widget/struct.Canvas.html
 /// [the overview]: index.html#overview
 /// [`iced_wgpu`]: https://github.com/iced-rs/iced/tree/0.12/wgpu
-/// [`Svg` widget]: crate::widget::Svg
+/// [`Svg` widget]: ../widget/struct.Svg.html
 /// [Ghostscript Tiger]: https://commons.wikimedia.org/wiki/File:Ghostscript_Tiger.svg
 ///
 /// ## A simple "Hello, world!"

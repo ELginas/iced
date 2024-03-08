@@ -44,7 +44,7 @@ pub struct Settings<Flags> {
     ///
     /// By default, it is disabled.
     ///
-    /// [`Canvas`]: crate::widget::Canvas
+    /// [`Canvas`]: ../widget/struct.Canvas.html
     pub antialiasing: bool,
 }
 
